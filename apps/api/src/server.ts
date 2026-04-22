@@ -1,4 +1,5 @@
 import { contextStorage } from 'hono/context-storage';
+import { cors } from 'hono/cors';
 import { csrf } from 'hono/csrf';
 import { languageDetector } from 'hono/language';
 import { logger } from 'hono/logger';
@@ -36,6 +37,7 @@ const docConfig = {
 const app = createRouter();
 
 app.use(contextStorage());
+app.use(cors());
 app.use(csrf());
 app.use(secureHeaders());
 app.use(logger(customLogger));
