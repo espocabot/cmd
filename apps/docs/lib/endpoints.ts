@@ -214,6 +214,48 @@ const steamGameEndpoint: EndpointConfig = {
 	mockResult: 'Dead by Daylight',
 };
 
+const steamNicknameEndpoint: EndpointConfig = {
+	id: 'steam-nickname',
+	slug: 'nickname',
+	title: 'Nickname atual',
+	description:
+		'Mostra no chat o nome de exibicao atual do jogador na Steam.',
+	method: 'GET',
+	pathTemplate: '/api/{lang}/steam/nickname/{steam_id}',
+	queryParams: [],
+	params: [
+		{
+			id: 'lang',
+			label: 'Idioma',
+			description: 'Idioma da resposta no chat',
+			type: 'select',
+			options: langOptions,
+			required: true,
+		},
+		{
+			id: 'steam_id',
+			label: 'Steam ID',
+			description: 'ID do perfil Steam do jogador',
+			type: 'text',
+			placeholder: '76561198140203933',
+			defaultValue: '76561198209279900',
+			required: true,
+		},
+	],
+	textPresets: [
+		{ id: 'simple', label: 'Simples', template: '{result}' },
+		{
+			id: 'informativo',
+			label: 'Informativo',
+			template: 'Nick na Steam: {result}',
+		},
+	],
+	defaultTemplate: 'O nick do streamer na Steam eh: {result}',
+	defaultCommandName: 'nick',
+	resultPlaceholder: '{result}',
+	mockResult: 'SouzaBoy',
+};
+
 const twitchFollowAgeEndpoint: EndpointConfig = {
 	id: 'twitch-followage',
 	slug: 'followage',
@@ -498,7 +540,7 @@ export const categories: Category[] = [
 				slug: 'steam',
 				label: 'Steam',
 				icon: 'gamepad-2',
-				endpoints: [steamHoursEndpoint, steamGameEndpoint],
+				endpoints: [steamHoursEndpoint, steamGameEndpoint, steamNicknameEndpoint],
 			},
 			{
 				id: 'twitch',

@@ -25,7 +25,8 @@
 				"casual": "{totalHours, plural, =0 {# horas} one {# hora} other {# horas}} e {totalMinutes, plural, =0 {# minutos} one {# minuto} other {# minutos}}"
 			},
 			"error": {
-				"playtime": "Falha ao buscar tempo de jogo para steamId: {steamId} e appId: {appId}"
+				"playtime": "Falha ao buscar tempo de jogo para steamId: {steamId} e appId: {appId}",
+				"nickname": "Falha ao buscar nickname para steamId: {steamId}"
 			}
 		},
 		"tiktok": {
