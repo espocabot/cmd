@@ -24,8 +24,8 @@ const CommandGeneratorFormDataSchema = z.object({
 	liveCommand: z.string().min(1, 'Command name is required'),
 	endpointParams: z.record(z.string(), z.string()),
 	endpointQueryParams: z.record(z.string(), z.string()),
-	textPresets: z.string(),
-	chatText: z.string(),
+	textPresets: z.string().optional(),
+	chatText: z.string().optional(),
 });
 
 export type CommandGeneratorFormData = z.infer<
@@ -38,9 +38,10 @@ interface CommandGeneratorProps {
 
 export function CommandGenerator({ endpoint }: CommandGeneratorProps) {
 	const methods = useZodForm(CommandGeneratorFormDataSchema, {
+		mode: 'all',
 		defaultValues: {
 			selectedBot: 'nightbot',
-			liveCommand: 'horas',
+			liveCommand: endpoint.defaultCommandName,
 			endpointParams: endpoint.params.reduce(
 				(acc, param) => {
 					acc[param.id] = param.defaultValue || '';
