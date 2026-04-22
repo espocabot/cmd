@@ -1,15 +1,22 @@
 import { z } from 'zod';
 
 export const youtubeVideoTypeSchema = z
-	.union([z.literal('video'), z.literal('short'), z.literal('any')])
+	.union([
+		z.literal('video'),
+		z.literal('short'),
+		z.literal('live'),
+		z.literal('any'),
+	])
 	.describe(
-		"Filter by content type: 'video' for regular videos, 'short' for YouTube Shorts, 'any' for both",
+		"Filter by content type: 'video' for regular videos, 'short' for YouTube Shorts, 'live' for live streams, 'any' for all types",
 	);
 
 export type YoutubeVideoType = z.infer<typeof youtubeVideoTypeSchema>;
 
 export const getYoutubeLatestVideoParamsSchema = z.object({
-	channel_id: z.string().describe('YouTube channel ID'),
+	handle_or_id: z
+		.string()
+		.describe('YouTube channel ID or handle (e.g. @MrBeast)'),
 });
 
 export const getYoutubeLatestVideoQuerySchema = z.object({
@@ -17,7 +24,7 @@ export const getYoutubeLatestVideoQuerySchema = z.object({
 		.optional()
 		.default('any')
 		.describe(
-			"Filter by content type: 'video' for regular videos, 'short' for YouTube Shorts, 'any' for both",
+			"Filter by content type: 'video' for regular videos, 'short' for YouTube Shorts, 'live' for live streams, 'any' for all types",
 		),
 	separator: z
 		.string()
@@ -56,6 +63,14 @@ export const youtubePlaylistItemsResponseSchema = z.object({
 					videoId: z.string(),
 				}),
 			}),
+		}),
+	),
+});
+
+export const youtubeChannelResponseSchema = z.object({
+	items: z.array(
+		z.object({
+			id: z.string(),
 		}),
 	),
 });

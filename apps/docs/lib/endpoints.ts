@@ -218,8 +218,7 @@ const steamNicknameEndpoint: EndpointConfig = {
 	id: 'steam-nickname',
 	slug: 'nickname',
 	title: 'Nickname atual',
-	description:
-		'Mostra no chat o nome de exibicao atual do jogador na Steam.',
+	description: 'Mostra no chat o nome de exibicao atual do jogador na Steam.',
 	method: 'GET',
 	pathTemplate: '/api/{lang}/steam/nickname/{steam_id}',
 	queryParams: [],
@@ -540,7 +539,11 @@ export const categories: Category[] = [
 				slug: 'steam',
 				label: 'Steam',
 				icon: 'gamepad-2',
-				endpoints: [steamHoursEndpoint, steamGameEndpoint, steamNicknameEndpoint],
+				endpoints: [
+					steamHoursEndpoint,
+					steamGameEndpoint,
+					steamNicknameEndpoint,
+				],
 			},
 			{
 				id: 'twitch',

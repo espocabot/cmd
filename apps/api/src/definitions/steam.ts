@@ -67,9 +67,7 @@ export const getPlayerSummariesResponseFromSteamSchema = z.object({
 		players: z.array(
 			z.object({
 				steamid: z.string().describe('64-bit Steam ID of the user'),
-				personaname: z
-					.string()
-					.describe('The player current display name'),
+				personaname: z.string().describe('The player current display name'),
 			}),
 		),
 	}),
