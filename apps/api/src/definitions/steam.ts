@@ -53,3 +53,30 @@ export const cachedPlatimeDataSchema = z.object({
 });
 
 export type CachedPlaytimeData = z.infer<typeof cachedPlatimeDataSchema>;
+
+export const getSteamNicknameParamsSchema = z.object({
+	steam_id: z.string().describe('Steam ID of the user'),
+});
+
+export const getSteamNicknameResponseSchema = z
+	.string()
+	.describe('Current Steam display name (persona name) of the user');
+
+export const getPlayerSummariesResponseFromSteamSchema = z.object({
+	response: z.object({
+		players: z.array(
+			z.object({
+				steamid: z.string().describe('64-bit Steam ID of the user'),
+				personaname: z
+					.string()
+					.describe('The player current display name'),
+			}),
+		),
+	}),
+});
+
+export const cachedNicknameDataSchema = z.object({
+	nickname: z.string().describe('Current Steam display name'),
+});
+
+export type CachedNicknameData = z.infer<typeof cachedNicknameDataSchema>;

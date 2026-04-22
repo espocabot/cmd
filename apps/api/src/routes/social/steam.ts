@@ -1,6 +1,8 @@
 import { errorSchema } from '@/definitions/http-errors.ts';
 import { NOT_FOUND, OK } from '@/definitions/http-status-code.ts';
 import {
+	getSteamNicknameParamsSchema,
+	getSteamNicknameResponseSchema,
 	getSteamPlaytimeInHoursParamsSchema,
 	getSteamPlaytimeInHoursQuerySchema,
 	getSteamPlaytimeInHoursResponseSchema,
@@ -9,64 +11,114 @@ import { createRouter } from '@/lib/create-router.ts';
 import { isErr } from '@/lib/result.ts';
 import { SteamProvider } from '@/providers/steam.ts';
 
-const steam = createRouter().openapi(
-	{
-		method: 'get',
-		path: '/hours/{steam_id}/{app_id}',
-		summary: 'Get Steam playtime in hours',
-		tags: ['Steam'],
-		request: {
-			params: getSteamPlaytimeInHoursParamsSchema,
-			query: getSteamPlaytimeInHoursQuerySchema,
-		},
-		responses: {
-			[OK]: {
-				description: 'Playtime in hours',
-				content: {
-					'text/plain': {
-						schema: getSteamPlaytimeInHoursResponseSchema,
+const steam = createRouter()
+	.openapi(
+		{
+			method: 'get',
+			path: '/hours/{steam_id}/{app_id}',
+			summary: 'Get Steam playtime in hours',
+			tags: ['Steam'],
+			request: {
+				params: getSteamPlaytimeInHoursParamsSchema,
+				query: getSteamPlaytimeInHoursQuerySchema,
+			},
+			responses: {
+				[OK]: {
+					description: 'Playtime in hours',
+					content: {
+						'text/plain': {
+							schema: getSteamPlaytimeInHoursResponseSchema,
+						},
+					},
+				},
+				[NOT_FOUND]: {
+					description: 'Error fetching playtime',
+					content: {
+						'application/json': {
+							schema: errorSchema,
+						},
 					},
 				},
 			},
-			[NOT_FOUND]: {
-				description: 'Error fetching playtime',
-				content: {
-					'application/json': {
-						schema: errorSchema,
-					},
-				},
-			},
 		},
-	},
-	async (c) => {
-		const t = c.get('t');
-		const { 'text-format': textFormat } = c.req.valid('query');
-		const { steam_id: steamId, app_id: appId } = c.req.valid('param');
+		async (c) => {
+			const t = c.get('t');
+			const { 'text-format': textFormat } = c.req.valid('query');
+			const { steam_id: steamId, app_id: appId } = c.req.valid('param');
 
-		const provider = new SteamProvider();
+			const provider = new SteamProvider();
 
-		const playtimeResult = await provider.getPlaytime({
-			appId,
-			steamId,
-		});
+			const playtimeResult = await provider.getPlaytime({
+				appId,
+				steamId,
+			});
 
-		if (isErr(playtimeResult)) {
-			return c.json(
-				{
-					success: false as const,
-					error: t('social.steam.error.playtime', { appId, steamId }),
-				},
-				NOT_FOUND,
+			if (isErr(playtimeResult)) {
+				return c.json(
+					{
+						success: false as const,
+						error: t('social.steam.error.playtime', { appId, steamId }),
+					},
+					NOT_FOUND,
+				);
+			}
+
+			const { playtimeInMinutes, gameName } = playtimeResult.value;
+
+			return c.text(
+				provider.getPlaytimeText(playtimeInMinutes, gameName, textFormat),
+				OK,
 			);
-		}
+		},
+	)
+	.openapi(
+		{
+			method: 'get',
+			path: '/nickname/{steam_id}',
+			summary: 'Get current Steam nickname',
+			tags: ['Steam'],
+			request: {
+				params: getSteamNicknameParamsSchema,
+			},
+			responses: {
+				[OK]: {
+					description: 'Current Steam display name',
+					content: {
+						'text/plain': {
+							schema: getSteamNicknameResponseSchema,
+						},
+					},
+				},
+				[NOT_FOUND]: {
+					description: 'Error fetching nickname',
+					content: {
+						'application/json': {
+							schema: errorSchema,
+						},
+					},
+				},
+			},
+		},
+		async (c) => {
+			const t = c.get('t');
+			const { steam_id: steamId } = c.req.valid('param');
 
-		const { playtimeInMinutes, gameName } = playtimeResult.value;
+			const provider = new SteamProvider();
 
-		return c.text(
-			provider.getPlaytimeText(playtimeInMinutes, gameName, textFormat),
-			OK,
-		);
-	},
-);
+			const nicknameResult = await provider.getNickname({ steamId });
+
+			if (isErr(nicknameResult)) {
+				return c.json(
+					{
+						success: false as const,
+						error: t('social.steam.error.nickname', { steamId }),
+					},
+					NOT_FOUND,
+				);
+			}
+
+			return c.text(nicknameResult.value.nickname, OK);
+		},
+	);
 
 export { steam };
