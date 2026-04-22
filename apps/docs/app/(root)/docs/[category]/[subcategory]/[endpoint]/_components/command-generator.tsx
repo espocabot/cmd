@@ -80,7 +80,10 @@ export function CommandGenerator({ endpoint }: CommandGeneratorProps) {
 			searchParams.append(key, value);
 		}
 
-		const url = new URL(path, process.env.NEXT_PUBLIC_API_BASE_URL);
+		const url = new URL(
+			path,
+			process.env.NEXT_PUBLIC_API_BASE_URL || 'https://cmd.espoca.bot',
+		);
 		url.search = searchParams.toString();
 		return url.toString();
 	}, [endpoint.pathTemplate, endpointParams, endpointQueryParams]);
