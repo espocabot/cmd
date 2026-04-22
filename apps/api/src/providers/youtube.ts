@@ -351,7 +351,7 @@ export class YoutubeProvider {
 		const channelId = firstItem.id;
 
 		await setKV(cacheKey, channelId, {
-			expirationTtl: 60 * 60 * 24, // 24 hours
+			expirationTtl: 60 * 60 * 24 * 30, // 30 days
 		});
 
 		return ok(channelId);
