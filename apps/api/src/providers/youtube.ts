@@ -52,6 +52,14 @@ export class YoutubeProvider {
 			);
 		}
 
+		if (type === 'live') {
+			return this.#getLatestFromLivePlaylist(
+				channelId,
+				YOUTUBE_API_KEY,
+				cacheKey,
+			);
+		}
+
 		// type === 'any': just get the most recent upload
 		return this.#getLatestUpload(channelId, YOUTUBE_API_KEY, cacheKey);
 	}
@@ -111,6 +119,66 @@ export class YoutubeProvider {
 		};
 
 		logger('Fetched latest Short from YouTube API:', JSON.stringify(data));
+
+		await setKV(cacheKey, JSON.stringify(data), {
+			expirationTtl: LATEST_VIDEO_TTL_TIME,
+		});
+
+		return ok(data);
+	}
+
+	/**
+	 * Gets the latest live stream (or live stream VOD) using the UULV playlist.
+	 */
+	async #getLatestFromLivePlaylist(
+		channelId: string,
+		apiKey: string,
+		cacheKey: string,
+	) {
+		const livePlaylistId = channelId.replace(/^UC/, 'UULV');
+
+		const params = new URLSearchParams({
+			part: 'snippet',
+			playlistId: livePlaylistId,
+			maxResults: '1',
+			key: apiKey,
+		});
+
+		const url = `${this.#baseUrl}/playlistItems?${params.toString()}`;
+		logger(url);
+
+		const res = await fetch(url);
+
+		if (!res.ok) {
+			logger(
+				`Failed to fetch live playlist: ${res.status} ${res.statusText}`,
+			);
+			return err(new Error('Failed to fetch live playlist'));
+		}
+
+		const json = await res.json();
+		const parsed = youtubePlaylistItemsResponseSchema.safeParse(json);
+
+		if (!parsed.success) {
+			logger(
+				'Failed to parse live playlist response:',
+				parsed.error.message,
+			);
+			return err(new Error('Failed to parse live playlist response'));
+		}
+
+		const firstItem = parsed.data.items[0];
+		if (!firstItem) {
+			logger(`No lives found for channel ID: ${channelId}`);
+			return err(new Error('No lives found for this channel'));
+		}
+
+		const data: CachedLatestVideoData = {
+			title: firstItem.snippet.title,
+			videoId: firstItem.snippet.resourceId.videoId,
+		};
+
+		logger('Fetched latest live from YouTube API:', JSON.stringify(data));
 
 		await setKV(cacheKey, JSON.stringify(data), {
 			expirationTtl: LATEST_VIDEO_TTL_TIME,
