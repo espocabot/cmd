@@ -46,15 +46,15 @@ export const youtubeSearchResponseSchema = z.object({
 	),
 });
 
-export const youtubeVideoDetailsResponseSchema = z.object({
+export const youtubePlaylistItemsResponseSchema = z.object({
 	items: z.array(
 		z.object({
-			id: z.string(),
-			contentDetails: z.object({
-				duration: z.string().describe('ISO 8601 duration format'),
-			}),
 			snippet: z.object({
 				title: z.string(),
+				publishedAt: z.string(),
+				resourceId: z.object({
+					videoId: z.string(),
+				}),
 			}),
 		}),
 	),
