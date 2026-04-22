@@ -138,7 +138,7 @@ const steamHoursEndpoint: EndpointConfig = {
 		{
 			id: 'steam_id',
 			label: 'Steam ID',
-			description: 'ID do perfil Steam do jogador',
+			description: 'ID do perfil Steam do jogador. Obtenha em <a href="https://steamid.io" target="_blank">steamid.io</a>',
 			type: 'text',
 			placeholder: '76561198209279900',
 			defaultValue: '76561198209279900',
@@ -147,7 +147,7 @@ const steamHoursEndpoint: EndpointConfig = {
 		{
 			id: 'app_id',
 			label: 'App ID do jogo',
-			description: 'ID do jogo na loja da Steam',
+			description: 'ID do jogo na loja da Steam. Encontre em <a href="https://steamdb.info" target="_blank">steamdb.info</a>',
 			type: 'text',
 			placeholder: '381210',
 			defaultValue: '381210',
@@ -194,7 +194,7 @@ const steamNicknameEndpoint: EndpointConfig = {
 		{
 			id: 'steam_id',
 			label: 'Steam ID',
-			description: 'ID do perfil Steam do jogador',
+			description: 'ID do perfil Steam do jogador. Obtenha em <a href="https://steamid.io" target="_blank">steamid.io</a>',
 			type: 'text',
 			placeholder: '76561198209279900',
 			defaultValue: '76561198209279900',
@@ -279,7 +279,7 @@ const youtubeLatestVideoEndpoint: EndpointConfig = {
 		{
 			id: 'handle_or_id',
 			label: 'Handle ou ID',
-			description: 'Handle do canal (com @) ou ID do canal',
+			description: 'Handle do canal (com @) ou ID. Veja como obter o ID em <a href="https://www.youtube.com/account_advanced" target="_blank">Configurações Avançadas</a>',
 			type: 'text',
 			placeholder: '@MrBeast',
 			defaultValue: '@MrBeast',
