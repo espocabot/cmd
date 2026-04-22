@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
-import { FormProvider } from 'react-hook-form';
+import { FormProvider, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import {
 	FieldGroup,
@@ -59,12 +59,19 @@ export function CommandGenerator({ endpoint }: CommandGeneratorProps) {
 		},
 	});
 
-	const formValues = methods.watch();
-	const endpointParams = formValues.endpointParams || {};
-	const endpointQueryParams = formValues.endpointQueryParams || {};
-	const selectedBot = formValues.selectedBot;
-	const liveCommand = formValues.liveCommand;
-	const chatText = formValues.chatText;
+	const endpointParams =
+		useWatch({ control: methods.control, name: 'endpointParams' }) || {};
+	const endpointQueryParams =
+		useWatch({ control: methods.control, name: 'endpointQueryParams' }) || {};
+	const selectedBot = useWatch({
+		control: methods.control,
+		name: 'selectedBot',
+	});
+	const liveCommand = useWatch({
+		control: methods.control,
+		name: 'liveCommand',
+	});
+	const chatText = useWatch({ control: methods.control, name: 'chatText' });
 
 	let path = endpoint.pathTemplate;
 	for (const [key, value] of Object.entries(endpointParams)) {
