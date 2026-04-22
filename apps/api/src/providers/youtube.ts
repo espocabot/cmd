@@ -3,11 +3,12 @@ import {
 	type YoutubeVideoType,
 	youtubePlaylistItemsResponseSchema,
 	youtubeSearchResponseSchema,
+	youtubeChannelResponseSchema,
 } from '@/definitions/youtube.ts';
 import { getEnvs } from '@/lib/env.ts';
 import { getKV, setKV } from '@/lib/kv.ts';
 import { logger } from '@/lib/logger.ts';
-import { err, ok } from '@/lib/result.ts';
+import { err, isErr, ok } from '@/lib/result.ts';
 
 const LATEST_VIDEO_TTL_TIME = 60 * 5; // 5 minutes
 
@@ -15,9 +16,18 @@ export class YoutubeProvider {
 	#baseUrl = 'https://www.googleapis.com/youtube/v3';
 
 	async getLatestVideo({
-		channelId,
+		handleOrId,
 		type,
-	}: { channelId: string; type: YoutubeVideoType }) {
+	}: { handleOrId: string; type: YoutubeVideoType }) {
+		const { YOUTUBE_API_KEY } = getEnvs();
+		
+		const channelIdResult = await this.#resolveChannelId(handleOrId, YOUTUBE_API_KEY);
+		if (isErr(channelIdResult)) {
+			return err(channelIdResult.error);
+		}
+		
+		const channelId = channelIdResult.value;
+		
 		const cacheKey = `social:youtube:latest-video:${channelId}:${type}`;
 		const cached = await getKV<CachedLatestVideoData>(cacheKey, 'json');
 
@@ -25,8 +35,6 @@ export class YoutubeProvider {
 			logger('Cache hit for:', cacheKey);
 			return ok(cached);
 		}
-
-		const { YOUTUBE_API_KEY } = getEnvs();
 
 		if (type === 'short') {
 			return this.#getLatestFromShortsPlaylist(
@@ -237,6 +245,58 @@ export class YoutubeProvider {
 		});
 
 		return ok(data);
+	}
+
+	async #resolveChannelId(handleOrId: string, apiKey: string) {
+		if (handleOrId.startsWith('UC') && handleOrId.length === 24) {
+			return ok(handleOrId);
+		}
+
+		const handle = handleOrId.startsWith('@') ? handleOrId : `@${handleOrId}`;
+		const cacheKey = `social:youtube:resolve-handle:${handle}`;
+		const cached = await getKV<string>(cacheKey, 'text');
+
+		if (cached) {
+			return ok(cached);
+		}
+
+		const params = new URLSearchParams({
+			part: 'id',
+			forHandle: handle,
+			key: apiKey,
+		});
+
+		const url = `${this.#baseUrl}/channels?${params.toString()}`;
+		logger(url);
+
+		const res = await fetch(url);
+
+		if (!res.ok) {
+			logger(`Failed to resolve handle ${handle}: ${res.statusText}`);
+			return err(new Error('Failed to resolve handle'));
+		}
+
+		const json = await res.json();
+		const parsed = youtubeChannelResponseSchema.safeParse(json);
+
+		if (!parsed.success) {
+			logger('Failed to parse channels response:', parsed.error.message);
+			return err(new Error('Failed to parse channels response'));
+		}
+
+		const firstItem = parsed.data.items[0];
+		if (!firstItem) {
+			logger(`No channel found for handle: ${handle}`);
+			return err(new Error('No channel found for this handle'));
+		}
+
+		const channelId = firstItem.id;
+		
+		await setKV(cacheKey, channelId, {
+			expirationTtl: 60 * 60 * 24, // 24 hours
+		});
+
+		return ok(channelId);
 	}
 
 	formatVideoText(title: string, videoId: string, separator: string) {

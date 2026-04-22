@@ -9,7 +9,7 @@ export const youtubeVideoTypeSchema = z
 export type YoutubeVideoType = z.infer<typeof youtubeVideoTypeSchema>;
 
 export const getYoutubeLatestVideoParamsSchema = z.object({
-	channel_id: z.string().describe('YouTube channel ID'),
+	handle_or_id: z.string().describe('YouTube channel ID or handle (e.g. @MrBeast)'),
 });
 
 export const getYoutubeLatestVideoQuerySchema = z.object({
@@ -56,6 +56,14 @@ export const youtubePlaylistItemsResponseSchema = z.object({
 					videoId: z.string(),
 				}),
 			}),
+		}),
+	),
+});
+
+export const youtubeChannelResponseSchema = z.object({
+	items: z.array(
+		z.object({
+			id: z.string(),
 		}),
 	),
 });

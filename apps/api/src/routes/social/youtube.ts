@@ -12,7 +12,7 @@ import { YoutubeProvider } from '@/providers/youtube.ts';
 const youtube = createRouter().openapi(
 	{
 		method: 'get',
-		path: '/latest-video/{channel_id}',
+		path: '/latest-video/{handle_or_id}',
 		summary: 'Get the latest YouTube video',
 		tags: ['YouTube'],
 		request: {
@@ -40,13 +40,13 @@ const youtube = createRouter().openapi(
 	},
 	async (c) => {
 		const t = c.get('t');
-		const { channel_id: channelId } = c.req.valid('param');
+		const { handle_or_id: handleOrId } = c.req.valid('param');
 		const { type, separator } = c.req.valid('query');
 
 		const provider = new YoutubeProvider();
 
 		const result = await provider.getLatestVideo({
-			channelId,
+			handleOrId,
 			type,
 		});
 
@@ -54,7 +54,7 @@ const youtube = createRouter().openapi(
 			return c.json(
 				{
 					success: false as const,
-					error: t('social.youtube.error.latest-video', { channelId }),
+					error: t('social.youtube.error.latest-video', { channelId: handleOrId }),
 				},
 				NOT_FOUND,
 			);
