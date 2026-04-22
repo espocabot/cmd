@@ -25,7 +25,8 @@
 				"casual": "{totalHours, plural, =0 {# hours} one {# hour} other {# hours}} and {totalMinutes, plural, =0 {# minutes} one {# minute} other {# minutes}}"
 			},
 			"error": {
-				"playtime": "Failed to fetch playtime for steamId: {steamId} and appId: {appId}"
+				"playtime": "Failed to fetch playtime for steamId: {steamId} and appId: {appId}",
+				"nickname": "Failed to fetch nickname for steamId: {steamId}"
 			}
 		},
 		"tiktok": {
