@@ -18,7 +18,12 @@ export function FooterSection() {
 							target="_blank"
 							className="size-6"
 						>
-							<svg viewBox="0 0 1024 1024" fill="none">
+							<svg
+								role="img"
+								aria-label="GitHub icon"
+								viewBox="0 0 1024 1024"
+								fill="none"
+							>
 								<path
 									fillRule="evenodd"
 									clipRule="evenodd"

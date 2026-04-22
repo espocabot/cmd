@@ -4,11 +4,11 @@ import {
 	BoxIcon,
 	Clock2Icon,
 	Gamepad2Icon,
+	type LucideIcon,
 	MusicIcon,
 	PlayIcon,
 	TvIcon,
 	UsersIcon,
-	type LucideIcon,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

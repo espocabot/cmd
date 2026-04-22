@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: Input group does not need key events as it is a structural wrapper */
 'use client';
 
 import { cva, type VariantProps } from 'class-variance-authority';

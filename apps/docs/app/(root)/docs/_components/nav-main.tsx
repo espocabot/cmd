@@ -1,6 +1,7 @@
 'use client';
 
-import { HeartHandshakeIcon, SearchIcon, SparklesIcon } from 'lucide-react';
+import { BookOpenIcon, HeartHandshakeIcon } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import {
 	SidebarGroup,
 	SidebarMenu,
@@ -10,30 +11,26 @@ import {
 
 const items = [
 	{
-		title: 'Search',
-		url: '#',
-		icon: SearchIcon,
-		isActive: true,
-	},
-	{
-		title: 'Ask AI',
-		url: '#',
-		icon: SparklesIcon,
+		title: 'Introdução',
+		url: '/docs',
+		icon: BookOpenIcon,
 	},
 	{
 		title: 'Contribuição',
-		url: '#',
+		url: '/docs/contributing',
 		icon: HeartHandshakeIcon,
 	},
 ];
 
 export function NavMain() {
+	const pathname = usePathname();
+
 	return (
 		<SidebarGroup>
 			<SidebarMenu>
 				{items.map((item) => (
 					<SidebarMenuItem key={item.title}>
-						<SidebarMenuButton asChild isActive={item.isActive}>
+						<SidebarMenuButton asChild isActive={pathname === item.url}>
 							<a href={item.url}>
 								<item.icon />
 								<span>{item.title}</span>

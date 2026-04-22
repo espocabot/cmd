@@ -15,6 +15,8 @@ import type { CommandGeneratorFormData } from './command-generator';
 const botIcons: Record<string, ReactNode> = {
 	nightbot: (
 		<svg
+			role="img"
+			aria-label="Nightbot icon"
 			xmlns="http://www.w3.org/2000/svg"
 			width="2694.7"
 			height="2694.7"
@@ -28,12 +30,24 @@ const botIcons: Record<string, ReactNode> = {
 		</svg>
 	),
 	streamelements: (
-		<svg viewBox="0 0 24 24" fill="currentColor" className="size-5">
+		<svg
+			role="img"
+			aria-label="StreamElements icon"
+			viewBox="0 0 24 24"
+			fill="currentColor"
+			className="size-5"
+		>
 			<path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z" />
 		</svg>
 	),
 	botrix: (
-		<svg viewBox="0 0 24 24" fill="currentColor" className="size-5">
+		<svg
+			role="img"
+			aria-label="Botrix icon"
+			viewBox="0 0 24 24"
+			fill="currentColor"
+			className="size-5"
+		>
 			<path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1.17A7 7 0 0 1 14 22h-4a7 7 0 0 1-6.83-3H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 12 2zM9.5 16a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
 		</svg>
 	),

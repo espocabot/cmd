@@ -9,7 +9,7 @@ import {
 	FieldSeparator,
 	FieldSet,
 } from '@/components/ui/field';
-import type { EndpointConfig } from '@/lib/endpoints';
+import { bots, type EndpointConfig } from '@/lib/endpoints';
 import { useZodForm } from '@/lib/form';
 import { BotSelector } from './bot-selector';
 import { ChatPreview } from './chat-preview';
@@ -59,7 +59,13 @@ export function CommandGenerator({ endpoint }: CommandGeneratorProps) {
 		},
 	});
 
-	const { endpointParams, endpointQueryParams } = methods.watch();
+	const {
+		endpointParams,
+		endpointQueryParams,
+		selectedBot,
+		liveCommand,
+		chatText,
+	} = methods.watch();
 
 	const generatedEndpoint = useMemo(() => {
 		let path = endpoint.pathTemplate;
@@ -78,6 +84,23 @@ export function CommandGenerator({ endpoint }: CommandGeneratorProps) {
 		url.search = searchParams.toString();
 		return url.toString();
 	}, [endpoint.pathTemplate, endpointParams, endpointQueryParams]);
+
+	const generatedCommand = useMemo(() => {
+		const bot = bots.find((b) => b.id === selectedBot);
+		if (!bot || !liveCommand) return '';
+
+		return bot.addCommand(
+			liveCommand,
+			chatText || endpoint.defaultTemplate,
+			generatedEndpoint,
+		);
+	}, [
+		selectedBot,
+		liveCommand,
+		chatText,
+		endpoint.defaultTemplate,
+		generatedEndpoint,
+	]);
 
 	return (
 		<div className="flex flex-col gap-8">
@@ -137,12 +160,15 @@ export function CommandGenerator({ endpoint }: CommandGeneratorProps) {
 				<FieldSeparator />
 
 				<Suspense fallback={<div>Loading preview...</div>}>
-					<ChatPreview endpoint={generatedEndpoint} />
+					<ChatPreview
+						endpoint={generatedEndpoint}
+						defaultTemplate={endpoint.defaultTemplate}
+					/>
 				</Suspense>
 
 				<FieldSeparator />
 
-				<CommandOutput command={''} />
+				<CommandOutput command={generatedCommand} />
 			</FormProvider>
 		</div>
 	);
