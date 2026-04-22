@@ -37,6 +37,11 @@
 			"error": {
 				"latest-video": "Falha ao buscar dados do TikTok para o handle: {handle}"
 			}
+		},
+		"youtube": {
+			"error": {
+				"latest-video": "Falha ao buscar último vídeo para o canal: {channelId}"
+			}
 		}
 	}
 }

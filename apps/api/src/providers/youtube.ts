@@ -1,184 +1,167 @@
-import { z } from 'zod';
+import {
+	type CachedLatestVideoData,
+	type YoutubeVideoType,
+	youtubeSearchResponseSchema,
+	youtubeVideoDetailsResponseSchema,
+} from '@/definitions/youtube.ts';
 import { getEnvs } from '@/lib/env.ts';
+import { getKV, setKV } from '@/lib/kv.ts';
 import { logger } from '@/lib/logger.ts';
+import { err, ok } from '@/lib/result.ts';
 
-const channelDataResponseSchema = z.object({
-	items: z.array(
-		z.object({
-			contentDetails: z.object({
-				relatedPlaylists: z.object({
-					uploads: z.string(),
-				}),
-			}),
-		}),
-	),
-});
-
-const playlistItemsResponseSchema = z.object({
-	kind: z.string(),
-	etag: z.string(),
-	nextPageToken: z.string().optional(),
-	prevPageToken: z.string().optional(),
-	pageInfo: z.object({
-		totalResults: z.number(),
-		resultsPerPage: z.number(),
-	}),
-	items: z.array(z.lazy(() => playlistItemSchema)),
-});
-
-const playlistItemSchema = z.object({
-	kind: z.string(),
-	etag: z.string(),
-	id: z.string(),
-	snippet: z.object({
-		publishedAt: z.string(),
-		channelId: z.string(),
-		title: z.string(),
-		description: z.string().optional(),
-		thumbnails: z.object({
-			default: z.object({
-				url: z.string(),
-				width: z.number(),
-				height: z.number(),
-			}),
-			medium: z.object({
-				url: z.string(),
-				width: z.number(),
-				height: z.number(),
-			}),
-			high: z.object({
-				url: z.string(),
-				width: z.number(),
-				height: z.number(),
-			}),
-		}),
-		channelTitle: z.string(),
-		playlistId: z.string(),
-		position: z.number(),
-		resourceId: z.object({
-			kind: z.string(),
-			videoId: z.string(),
-		}),
-	}),
-});
+const LATEST_VIDEO_TTL_TIME = 60 * 5; // 5 minutes
+const SHORTS_MAX_DURATION_SECONDS = 60;
 
 export class YoutubeProvider {
 	#baseUrl = 'https://www.googleapis.com/youtube/v3';
 
-	async getChannelDetails({ channelId }: { channelId: string }) {
-		const { YOUTUBE_API_KEY } = getEnvs();
+	async getLatestVideo({
+		channelId,
+		type,
+	}: { channelId: string; type: YoutubeVideoType }) {
+		const cacheKey = `social:youtube:latest-video:${channelId}:${type}`;
+		const cached = await getKV<CachedLatestVideoData>(cacheKey, 'json');
 
-		try {
-			const channelResponse = await fetch(
-				`${this.#baseUrl}/channels?part=contentDetails&id=${channelId}&key=${YOUTUBE_API_KEY}`,
-			);
-
-			if (!channelResponse.ok) {
-				logger(
-					`Failed to fetch channel details: ${channelResponse.statusText}`,
-				);
-				throw new Error(
-					`Failed to fetch channel details: ${channelResponse.statusText}`,
-				);
-			}
-
-			const channelData = await channelResponse.json();
-
-			const parsedChannelData = channelDataResponseSchema.parse(channelData);
-
-			if (!parsedChannelData.items.length) {
-				// TODO: define if returning null or throwing an error is better
-				logger(`No items found for channel ID: ${channelId}`);
-				throw new Error(`No items found for channel ID: ${channelId}`);
-			}
-
-			const firstItem = parsedChannelData.items[0];
-			if (!firstItem) {
-				logger(`Uploads playlist ID not found for channel ID: ${channelId}`);
-				throw new Error(
-					`Uploads playlist ID not found for channel ID: ${channelId}`,
-				);
-			}
-
-			return firstItem;
-		} catch (error) {
-			logger(`Error fetching channel details for ID ${channelId}`);
-			throw error;
+		if (cached) {
+			logger('Cache hit for:', cacheKey);
+			return ok(cached);
 		}
-	}
 
-	async getLatestContent({ channelId }: { channelId: string }) {
 		const { YOUTUBE_API_KEY } = getEnvs();
 
-		try {
-			const channelResponse = await fetch(
-				`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${YOUTUBE_API_KEY}`,
+		const searchParams = new URLSearchParams({
+			part: 'snippet',
+			channelId,
+			order: 'date',
+			type: 'video',
+			maxResults: type === 'any' ? '1' : '10',
+			key: YOUTUBE_API_KEY,
+		});
+
+		const searchUrl = `${this.#baseUrl}/search?${searchParams.toString()}`;
+		logger(searchUrl);
+
+		const searchRes = await fetch(searchUrl);
+
+		if (!searchRes.ok) {
+			logger(
+				`Failed to fetch from YouTube Search API: ${searchRes.status} ${searchRes.statusText}`,
 			);
+			return err(new Error('Failed to fetch from YouTube Search API'));
+		}
 
-			if (!channelResponse.ok) {
-				logger(
-					`Failed to fetch channel details: ${channelResponse.statusText}`,
-				);
-				throw new Error(
-					`Failed to fetch channel details: ${channelResponse.statusText}`,
-				);
-			}
+		const searchJson = await searchRes.json();
+		const searchParsed = youtubeSearchResponseSchema.safeParse(searchJson);
 
-			const channelData = await channelResponse.json();
+		if (!searchParsed.success) {
+			logger(
+				'Failed to parse YouTube Search API response:',
+				searchParsed.error.message,
+			);
+			return err(
+				new Error('Failed to parse YouTube Search API response'),
+			);
+		}
 
-			const parsedChannelData = channelDataResponseSchema.parse(channelData);
+		if (!searchParsed.data.items.length) {
+			logger(`No videos found for channel ID: ${channelId}`);
+			return err(new Error('No videos found for this channel'));
+		}
 
-			if (!parsedChannelData.items.length) {
-				// TODO: define if returning null or throwing an error is better
-				logger(`No items found for channel ID: ${channelId}`);
-				throw new Error(`No items found for channel ID: ${channelId}`);
-			}
-
-			const firstItem = parsedChannelData.items[0];
+		if (type === 'any') {
+			const firstItem = searchParsed.data.items[0];
 			if (!firstItem) {
-				logger(`Uploads playlist ID not found for channel ID: ${channelId}`);
-				throw new Error(
-					`Uploads playlist ID not found for channel ID: ${channelId}`,
-				);
+				return err(new Error('No videos found for this channel'));
 			}
-			const uploadsPlaylistId =
-				firstItem.contentDetails.relatedPlaylists.uploads;
 
-			const getPlaylistDataParams = new URLSearchParams({
-				part: 'snippet',
-				maxResults: '50',
-				order: 'date',
-				playlistId: uploadsPlaylistId,
-				key: YOUTUBE_API_KEY,
+			const data: CachedLatestVideoData = {
+				title: firstItem.snippet.title,
+				videoId: firstItem.id.videoId,
+			};
+
+			await setKV(cacheKey, JSON.stringify(data), {
+				expirationTtl: LATEST_VIDEO_TTL_TIME,
 			});
 
-			const playlistResponse = await fetch(
-				`https://www.googleapis.com/youtube/v3/playlistItems?${getPlaylistDataParams.toString()}`,
-			);
-
-			if (!playlistResponse.ok) {
-				logger(
-					`Failed to fetch playlist items: ${playlistResponse.statusText}`,
-				);
-				throw new Error(
-					`Failed to fetch playlist items: ${playlistResponse.statusText}`,
-				);
-			}
-
-			const playlistData = await playlistResponse.json();
-			const parsedPlaylistData =
-				playlistItemsResponseSchema.parse(playlistData);
-
-			if (!parsedPlaylistData.items.length) {
-				// TODO: define if returning null or throwing an error is better
-				logger(`No items found in playlist ID: ${uploadsPlaylistId}`);
-				throw new Error(`No items found in playlist ID: ${uploadsPlaylistId}`);
-			}
-		} catch (error) {
-			logger(
-				`Error fetching latest content for channel ID ${channelId}: ${error}`,
-			);
-			throw error;
+			return ok(data);
 		}
+
+		const videoIds = searchParsed.data.items
+			.map((item) => item.id.videoId)
+			.join(',');
+
+		const detailsParams = new URLSearchParams({
+			part: 'contentDetails,snippet',
+			id: videoIds,
+			key: YOUTUBE_API_KEY,
+		});
+
+		const detailsUrl = `${this.#baseUrl}/videos?${detailsParams.toString()}`;
+		logger(detailsUrl);
+
+		const detailsRes = await fetch(detailsUrl);
+
+		if (!detailsRes.ok) {
+			logger(
+				`Failed to fetch video details: ${detailsRes.status} ${detailsRes.statusText}`,
+			);
+			return err(new Error('Failed to fetch video details'));
+		}
+
+		const detailsJson = await detailsRes.json();
+		const detailsParsed =
+			youtubeVideoDetailsResponseSchema.safeParse(detailsJson);
+
+		if (!detailsParsed.success) {
+			logger(
+				'Failed to parse video details response:',
+				detailsParsed.error.message,
+			);
+			return err(new Error('Failed to parse video details response'));
+		}
+
+		const matchingVideo = detailsParsed.data.items.find((video) => {
+			const durationSeconds = this.#parseDuration(
+				video.contentDetails.duration,
+			);
+			return type === 'short'
+				? durationSeconds <= SHORTS_MAX_DURATION_SECONDS
+				: durationSeconds > SHORTS_MAX_DURATION_SECONDS;
+		});
+
+		if (!matchingVideo) {
+			const label = type === 'short' ? 'Shorts' : 'videos';
+			logger(`No ${label} found for channel ID: ${channelId}`);
+			return err(new Error(`No ${label} found for this channel`));
+		}
+
+		const data: CachedLatestVideoData = {
+			title: matchingVideo.snippet.title,
+			videoId: matchingVideo.id,
+		};
+
+		logger('Fetched latest video from YouTube API:', JSON.stringify(data));
+
+		await setKV(cacheKey, JSON.stringify(data), {
+			expirationTtl: LATEST_VIDEO_TTL_TIME,
+		});
+
+		return ok(data);
+	}
+
+	formatVideoText(title: string, videoId: string, separator: string) {
+		const shortUrl = `https://youtu.be/${videoId}`;
+		return `${title}${separator}${shortUrl}`;
+	}
+
+	#parseDuration(isoDuration: string): number {
+		const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+		if (!match) return 0;
+
+		const hours = Number.parseInt(match[1] || '0', 10);
+		const minutes = Number.parseInt(match[2] || '0', 10);
+		const seconds = Number.parseInt(match[3] || '0', 10);
+
+		return hours * 3600 + minutes * 60 + seconds;
 	}
 }

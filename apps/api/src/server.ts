@@ -7,6 +7,7 @@ import { logger as customLogger } from '@/lib/logger.ts';
 import { i18nMiddleware } from '@/middlewares/i18n.js';
 import { health } from '@/routes/config/health.ts';
 import { steam } from '@/routes/social/steam.ts';
+import { youtube } from '@/routes/social/youtube.ts';
 import { createRouter } from './lib/create-router.ts';
 import { notFoundMiddleware } from './middlewares/http.ts';
 import { datetime } from './routes/miscellaneous/datetime.ts';
@@ -66,6 +67,7 @@ app.use('*', i18nMiddleware());
 
 // app.route("/api/:lang/tiktok", tiktok);
 app.route('/api/:lang/steam', steam);
+app.route('/api/:lang/youtube', youtube);
 app.route('/api/:lang/misc', datetime);
 app.route('/health', health);
 
