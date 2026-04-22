@@ -14,7 +14,7 @@ export async function generateStaticParams() {
 		endpoint: endpoint.slug,
 	}));
 }
-	
+
 export async function generateMetadata({
 	params,
 }: PageProps<'/docs/[category]/[subcategory]/[endpoint]'>): Promise<Metadata> {

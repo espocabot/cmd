@@ -173,47 +173,6 @@ const steamHoursEndpoint: EndpointConfig = {
 	mockResult: '1.234 horas de Dead by Daylight',
 };
 
-const steamGameEndpoint: EndpointConfig = {
-	id: 'steam-current-game',
-	slug: 'current-game',
-	title: 'Jogo atual',
-	description:
-		'Mostra no chat qual jogo o jogador esta jogando agora na Steam.',
-	method: 'GET',
-	pathTemplate: '/api/{lang}/steam/current-game/{steam_id}',
-	queryParams: [],
-	params: [
-		{
-			id: 'lang',
-			label: 'Idioma',
-			description: 'Idioma da resposta no chat',
-			type: 'select',
-			options: langOptions,
-			required: true,
-		},
-		{
-			id: 'steam_id',
-			label: 'Steam ID',
-			description: 'ID do perfil Steam do jogador',
-			type: 'text',
-			placeholder: '76561198140203933',
-			required: true,
-		},
-	],
-	textPresets: [
-		{ id: 'simple', label: 'Simples', template: '{result}' },
-		{
-			id: 'informativo',
-			label: 'Informativo',
-			template: 'Jogando agora: {result}',
-		},
-	],
-	defaultTemplate: 'Agora jogando: {result}',
-	defaultCommandName: 'jogo',
-	resultPlaceholder: '{result}',
-	mockResult: 'Dead by Daylight',
-};
-
 const steamNicknameEndpoint: EndpointConfig = {
 	id: 'steam-nickname',
 	slug: 'nickname',
@@ -255,206 +214,54 @@ const steamNicknameEndpoint: EndpointConfig = {
 	mockResult: 'SouzaBoy',
 };
 
-const twitchFollowAgeEndpoint: EndpointConfig = {
-	id: 'twitch-followage',
-	slug: 'followage',
-	title: 'Tempo de follow',
-	description: 'Mostra ha quanto tempo um usuario segue o canal na Twitch.',
+const youtubeLatestVideoEndpoint: EndpointConfig = {
+	id: 'youtube-latest-video',
+	slug: 'latest-video',
+	title: 'Último vídeo',
+	description: 'Mostra o título e link do último vídeo de um canal do YouTube.',
 	method: 'GET',
-	pathTemplate: '/api/{lang}/twitch/followage/{channel}/{user}',
-	queryParams: [],
-	params: [
+	pathTemplate: '/api/{lang}/youtube/latest-video/{handle_or_id}',
+	queryParams: [
 		{
-			id: 'lang',
-			label: 'Idioma',
-			description: 'Idioma da resposta no chat',
-			type: 'select',
-			options: langOptions,
-			required: true,
-		},
-		{
-			id: 'channel',
-			label: 'Canal',
-			description: 'Nome do canal na Twitch',
-			type: 'text',
-			placeholder: 'gaules',
-			required: true,
-		},
-		{
-			id: 'user',
-			label: 'Usuario',
-			description:
-				'Nome do usuario na Twitch (use a variavel do bot para pegar automaticamente)',
-			type: 'text',
-			placeholder: '$(user)',
-			required: true,
-		},
-	],
-	textPresets: [
-		{ id: 'simple', label: 'Simples', template: '{result}' },
-		{
-			id: 'informativo',
-			label: 'Informativo',
-			template: 'Seguindo ha: {result}',
-		},
-	],
-	defaultTemplate: '{result}',
-	defaultCommandName: 'followage',
-	resultPlaceholder: '{result}',
-	mockResult: '2 anos, 3 meses e 15 dias',
-};
-
-const twitchAccountAgeEndpoint: EndpointConfig = {
-	id: 'twitch-accountage',
-	slug: 'accountage',
-	title: 'Idade da conta',
-	description:
-		'Mostra ha quanto tempo a conta de um usuario da Twitch foi criada.',
-	method: 'GET',
-	pathTemplate: '/api/{lang}/twitch/accountage/{user}',
-	queryParams: [],
-	params: [
-		{
-			id: 'lang',
-			label: 'Idioma',
-			description: 'Idioma da resposta no chat',
-			type: 'select',
-			options: langOptions,
-			required: true,
-		},
-		{
-			id: 'user',
-			label: 'Usuario',
-			description: 'Nome do usuario na Twitch',
-			type: 'text',
-			placeholder: '$(user)',
-			required: true,
-		},
-	],
-	textPresets: [
-		{ id: 'simple', label: 'Simples', template: '{result}' },
-		{
-			id: 'informativo',
-			label: 'Informativo',
-			template: 'Conta criada ha: {result}',
-		},
-	],
-	defaultTemplate: '{result}',
-	defaultCommandName: 'accountage',
-	resultPlaceholder: '{result}',
-	mockResult: '4 anos, 7 meses e 2 dias',
-};
-
-const youtubeSubsEndpoint: EndpointConfig = {
-	id: 'youtube-subs',
-	slug: 'subscribers',
-	title: 'Inscritos',
-	description: 'Mostra a quantidade de inscritos de um canal do YouTube.',
-	method: 'GET',
-	pathTemplate: '/api/{lang}/youtube/subscribers/{channel_id}',
-	queryParams: [],
-	params: [
-		{
-			id: 'lang',
-			label: 'Idioma',
-			description: 'Idioma da resposta no chat',
-			type: 'select',
-			options: langOptions,
-			required: true,
-		},
-		{
-			id: 'channel_id',
-			label: 'ID do canal',
-			description: 'ID do canal no YouTube',
-			type: 'text',
-			placeholder: 'UC_x5XG1OV2P6uZZ5FSM9Ttw',
-			required: true,
-		},
-	],
-	textPresets: [
-		{ id: 'simple', label: 'Simples', template: '{result}' },
-		{
-			id: 'informativo',
-			label: 'Informativo',
-			template: 'Inscritos: {result}',
-		},
-	],
-	defaultTemplate: 'O canal tem {result}',
-	defaultCommandName: 'inscritos',
-	resultPlaceholder: '{result}',
-	mockResult: '1,2M inscritos',
-};
-
-const tiktokFollowersEndpoint: EndpointConfig = {
-	id: 'tiktok-followers',
-	slug: 'followers',
-	title: 'Seguidores',
-	description: 'Mostra a quantidade de seguidores de um perfil no TikTok.',
-	method: 'GET',
-	pathTemplate: '/api/{lang}/tiktok/followers/{username}',
-	queryParams: [],
-	params: [
-		{
-			id: 'lang',
-			label: 'Idioma',
-			description: 'Idioma da resposta no chat',
-			type: 'select',
-			options: langOptions,
-			required: true,
-		},
-		{
-			id: 'username',
-			label: 'Username',
-			description: 'Nome de usuario no TikTok (sem @)',
-			type: 'text',
-			placeholder: 'khaby.lame',
-			required: true,
-		},
-	],
-	textPresets: [
-		{ id: 'simple', label: 'Simples', template: '{result}' },
-		{
-			id: 'informativo',
-			label: 'Informativo',
-			template: 'Seguidores no TikTok: {result}',
-		},
-	],
-	defaultTemplate: 'O perfil tem {result}',
-	defaultCommandName: 'seguidores',
-	resultPlaceholder: '{result}',
-	mockResult: '162,3M seguidores',
-};
-
-const datetimeNowEndpoint: EndpointConfig = {
-	id: 'datetime-now',
-	slug: 'now',
-	title: 'Data e hora atual',
-	description:
-		'Mostra a data e hora atual no chat, com fuso horario configuravel.',
-	method: 'GET',
-	pathTemplate: '/api/{lang}/datetime/now',
-	queryParams: [],
-	params: [
-		{
-			id: 'lang',
-			label: 'Idioma',
-			description: 'Idioma da resposta no chat',
-			type: 'select',
-			options: langOptions,
-			required: true,
-		},
-		{
-			id: 'timezone',
-			label: 'Fuso horario',
-			description: 'Timezone no formato IANA',
+			id: 'type',
+			label: 'Tipo de vídeo',
+			description: 'Filtra por tipo de conteúdo',
 			type: 'select',
 			options: [
-				{ value: 'America/Sao_Paulo', label: 'Brasilia (BRT)' },
-				{ value: 'America/New_York', label: 'Nova York (EST)' },
-				{ value: 'Europe/Lisbon', label: 'Lisboa (WET)' },
-				{ value: 'Europe/Madrid', label: 'Madrid (CET)' },
-				{ value: 'UTC', label: 'UTC' },
+				{ value: 'video', label: 'Vídeo' },
+				{ value: 'short', label: 'Short' },
+				{ value: 'live', label: 'Live' },
+				{ value: 'any', label: 'Qualquer' },
 			],
+			defaultValue: 'any',
+		},
+		{
+			id: 'omit_hashtags',
+			label: 'Ocultar hashtags',
+			description: 'Remove hashtags do título',
+			type: 'select',
+			options: [
+				{ value: 'false', label: 'Não' },
+				{ value: 'true', label: 'Sim' },
+			],
+			defaultValue: 'false',
+		},
+	],
+	params: [
+		{
+			id: 'lang',
+			label: 'Idioma',
+			description: 'Idioma da resposta no chat',
+			type: 'select',
+			options: langOptions,
+			required: true,
+		},
+		{
+			id: 'handle_or_id',
+			label: 'Handle ou ID',
+			description: 'Handle do canal (com @) ou ID do canal',
+			type: 'text',
+			placeholder: '@MrBeast',
 			required: true,
 		},
 	],
@@ -463,13 +270,13 @@ const datetimeNowEndpoint: EndpointConfig = {
 		{
 			id: 'informativo',
 			label: 'Informativo',
-			template: 'Agora sao: {result}',
+			template: 'Último vídeo: {result}',
 		},
 	],
-	defaultTemplate: 'Agora sao {result}',
-	defaultCommandName: 'hora',
+	defaultTemplate: 'Saiu vídeo novo! {result}',
+	defaultCommandName: 'video',
 	resultPlaceholder: '{result}',
-	mockResult: '15:42 - 09/02/2026',
+	mockResult: 'I Buried Myself Alive For 7 Days - https://youtu.be/xxx',
 };
 
 const datetimeCountdownEndpoint: EndpointConfig = {
@@ -478,8 +285,31 @@ const datetimeCountdownEndpoint: EndpointConfig = {
 	title: 'Contagem regressiva',
 	description: 'Mostra quanto tempo falta para uma data/evento especifico.',
 	method: 'GET',
-	pathTemplate: '/api/{lang}/datetime/countdown/{target_date}',
-	queryParams: [],
+	pathTemplate: '/api/{lang}/misc/date-time/countdown',
+	queryParams: [
+		{
+			id: 'datetime',
+			label: 'Data alvo',
+			description: 'Data e hora (ex: 2026-12-25T00:00:00Z)',
+			type: 'text',
+			placeholder: '2026-12-25T00:00:00Z',
+			defaultValue: '2026-12-25T00:00:00Z',
+		},
+		{
+			id: 'text-format',
+			label: 'Formato do texto',
+			description: 'Formato para exibir no chat',
+			type: 'select',
+			options: [
+				{ value: 'casual', label: 'Casual' },
+				{ value: 'compact', label: 'Compacto' },
+				{ value: 'detailed', label: 'Detalhado' },
+				{ value: 'full', label: 'Completo' },
+				{ value: 'minimal', label: 'Minimo' },
+			],
+			defaultValue: 'casual',
+		},
+	],
 	params: [
 		{
 			id: 'lang',
@@ -487,27 +317,6 @@ const datetimeCountdownEndpoint: EndpointConfig = {
 			description: 'Idioma da resposta no chat',
 			type: 'select',
 			options: langOptions,
-			required: true,
-		},
-		{
-			id: 'target_date',
-			label: 'Data alvo',
-			description: 'Data do evento no formato YYYY-MM-DD',
-			type: 'text',
-			placeholder: '2026-12-25',
-			required: true,
-		},
-		{
-			id: 'timezone',
-			label: 'Fuso horario',
-			description: 'Timezone no formato IANA',
-			type: 'select',
-			options: [
-				{ value: 'America/Sao_Paulo', label: 'Brasilia (BRT)' },
-				{ value: 'America/New_York', label: 'Nova York (EST)' },
-				{ value: 'Europe/Lisbon', label: 'Lisboa (WET)' },
-				{ value: 'UTC', label: 'UTC' },
-			],
 			required: true,
 		},
 	],
@@ -539,32 +348,14 @@ export const categories: Category[] = [
 				slug: 'steam',
 				label: 'Steam',
 				icon: 'gamepad-2',
-				endpoints: [
-					steamHoursEndpoint,
-					steamGameEndpoint,
-					steamNicknameEndpoint,
-				],
-			},
-			{
-				id: 'twitch',
-				slug: 'twitch',
-				label: 'Twitch',
-				icon: 'tv',
-				endpoints: [twitchFollowAgeEndpoint, twitchAccountAgeEndpoint],
+				endpoints: [steamHoursEndpoint, steamNicknameEndpoint],
 			},
 			{
 				id: 'youtube',
 				slug: 'youtube',
 				label: 'YouTube',
 				icon: 'play',
-				endpoints: [youtubeSubsEndpoint],
-			},
-			{
-				id: 'tiktok',
-				slug: 'tiktok',
-				label: 'TikTok',
-				icon: 'music',
-				endpoints: [tiktokFollowersEndpoint],
+				endpoints: [youtubeLatestVideoEndpoint],
 			},
 		],
 	},
@@ -579,7 +370,7 @@ export const categories: Category[] = [
 				slug: 'datetime',
 				label: 'Data e Hora',
 				icon: 'clock',
-				endpoints: [datetimeNowEndpoint, datetimeCountdownEndpoint],
+				endpoints: [datetimeCountdownEndpoint],
 			},
 		],
 	},
