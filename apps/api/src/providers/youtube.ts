@@ -357,8 +357,20 @@ export class YoutubeProvider {
 		return ok(channelId);
 	}
 
-	formatVideoText(title: string, videoId: string, separator: string) {
+	formatVideoText(
+		title: string,
+		videoId: string,
+		separator: string,
+		omitHashtags = false,
+	) {
 		const shortUrl = `https://youtu.be/${videoId}`;
-		return `${title}${separator}${shortUrl}`;
+		let formattedTitle = title;
+
+		if (omitHashtags) {
+			// Remove any hashtag and following text up to a space
+			formattedTitle = formattedTitle.replace(/#[^\s#]+/g, '').trim();
+		}
+
+		return `${formattedTitle}${separator}${shortUrl}`;
 	}
 }
