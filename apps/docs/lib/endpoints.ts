@@ -140,7 +140,7 @@ const steamHoursEndpoint: EndpointConfig = {
 			label: 'Steam ID',
 			description: 'ID do perfil Steam do jogador',
 			type: 'text',
-			placeholder: '76561198140203933',
+			placeholder: '76561198209279900',
 			defaultValue: '76561198209279900',
 			required: true,
 		},
@@ -149,8 +149,8 @@ const steamHoursEndpoint: EndpointConfig = {
 			label: 'App ID do jogo',
 			description: 'ID do jogo na loja da Steam',
 			type: 'text',
-			placeholder: '381210',
-			defaultValue: '381210',
+			placeholder: '730',
+			defaultValue: '730',
 			required: true,
 		},
 	],
@@ -159,7 +159,7 @@ const steamHoursEndpoint: EndpointConfig = {
 		{
 			id: 'zoeira',
 			label: 'Zoeira',
-			template: 'O streamer ja jogou {result} e ainda eh ruim kkkk',
+			template: 'O streamer já jogou {result} e ainda é ruim kkkk',
 		},
 		{
 			id: 'informativo',
@@ -167,10 +167,10 @@ const steamHoursEndpoint: EndpointConfig = {
 			template: 'Tempo de jogo: {result}',
 		},
 	],
-	defaultTemplate: 'O Souza ja jogou {result}',
+	defaultTemplate: 'O streamer já jogou {result}',
 	defaultCommandName: 'horas',
 	resultPlaceholder: '{result}',
-	mockResult: '1.234 horas de Dead by Daylight',
+	mockResult: '5.432 horas de Counter-Strike 2',
 };
 
 const steamNicknameEndpoint: EndpointConfig = {
@@ -196,7 +196,7 @@ const steamNicknameEndpoint: EndpointConfig = {
 			label: 'Steam ID',
 			description: 'ID do perfil Steam do jogador',
 			type: 'text',
-			placeholder: '76561198140203933',
+			placeholder: '76561198209279900',
 			defaultValue: '76561198209279900',
 			required: true,
 		},
@@ -209,10 +209,10 @@ const steamNicknameEndpoint: EndpointConfig = {
 			template: 'Nick na Steam: {result}',
 		},
 	],
-	defaultTemplate: 'O nick do streamer na Steam eh: {result}',
+	defaultTemplate: 'O nick do streamer na Steam é: {result}',
 	defaultCommandName: 'nick',
 	resultPlaceholder: '{result}',
-	mockResult: 'SouzaBoy',
+	mockResult: 'FalleN',
 };
 
 const youtubeLatestVideoEndpoint: EndpointConfig = {
@@ -295,8 +295,8 @@ const datetimeCountdownEndpoint: EndpointConfig = {
 			label: 'Data alvo',
 			description: 'Data e hora (ex: 2026-12-25T00:00:00Z)',
 			type: 'text',
-			placeholder: '2026-12-25T00:00:00Z',
-			defaultValue: '2026-12-25T00:00:00Z',
+			placeholder: '2027-01-01T00:00:00Z',
+			defaultValue: '2027-01-01T00:00:00Z',
 		},
 		{
 			id: 'text-format',
