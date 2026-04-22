@@ -38,6 +38,11 @@
 			"error": {
 				"latest-video": "Failed to fetch TikTok data for handle: {handle}"
 			}
+		},
+		"youtube": {
+			"error": {
+				"latest-video": "Failed to fetch latest video for channel: {channelId}"
+			}
 		}
 	}
 }
