@@ -59,51 +59,40 @@ export function CommandGenerator({ endpoint }: CommandGeneratorProps) {
 		},
 	});
 
-	const {
-		endpointParams,
-		endpointQueryParams,
-		selectedBot,
-		liveCommand,
-		chatText,
-	} = methods.watch();
+	const endpointParams = methods.watch('endpointParams') || {};
+	const endpointQueryParams = methods.watch('endpointQueryParams') || {};
+	const selectedBot = methods.watch('selectedBot');
+	const liveCommand = methods.watch('liveCommand');
+	const chatText = methods.watch('chatText');
 
-	const generatedEndpoint = useMemo(() => {
-		let path = endpoint.pathTemplate;
-		for (const [key, value] of Object.entries(endpointParams)) {
-			path = path.replace(`{${key}}`, value);
-		}
+	let path = endpoint.pathTemplate;
+	for (const [key, value] of Object.entries(endpointParams)) {
+		path = path.replace(`{${key}}`, value as string);
+	}
 
-		const searchParams = new URLSearchParams();
+	const searchParams = new URLSearchParams();
 
-		for (const [key, value] of Object.entries(endpointQueryParams)) {
-			if (!value) continue;
-			searchParams.append(key, value);
-		}
+	for (const [key, value] of Object.entries(endpointQueryParams)) {
+		if (!value) continue;
+		searchParams.append(key, value as string);
+	}
 
-		const url = new URL(
-			path,
-			process.env.NEXT_PUBLIC_API_BASE_URL || 'https://cmd.espoca.bot',
-		);
-		url.search = searchParams.toString();
-		return url.toString();
-	}, [endpoint.pathTemplate, endpointParams, endpointQueryParams]);
+	const url = new URL(
+		path,
+		process.env.NEXT_PUBLIC_API_BASE_URL || 'https://cmd.espoca.bot',
+	);
+	url.search = searchParams.toString();
+	const generatedEndpoint = url.toString();
 
-	const generatedCommand = useMemo(() => {
-		const bot = bots.find((b) => b.id === selectedBot);
-		if (!bot || !liveCommand) return '';
-
-		return bot.addCommand(
+	let generatedCommand = '';
+	const bot = bots.find((b) => b.id === selectedBot);
+	if (bot && liveCommand) {
+		generatedCommand = bot.addCommand(
 			liveCommand,
 			chatText || endpoint.defaultTemplate,
 			generatedEndpoint,
 		);
-	}, [
-		selectedBot,
-		liveCommand,
-		chatText,
-		endpoint.defaultTemplate,
-		generatedEndpoint,
-	]);
+	}
 
 	return (
 		<div className="flex flex-col gap-8">
