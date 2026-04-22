@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import type { EndpointParam, EndpointQueryParam } from '@/lib/endpoints';
 import type { CommandGeneratorFormData } from './command-generator';
+import { DateTimePicker } from './date-time-picker';
 
 type Props = {
 	control: Control<CommandGeneratorFormData>;
@@ -73,6 +74,8 @@ function RouteParam({ param }: { param: EndpointParam }) {
 
 					{param.type === 'text' ? (
 						<Input {...field} placeholder={param.placeholder} />
+					) : param.type === 'datetime' ? (
+						<DateTimePicker value={field.value} onChange={field.onChange} />
 					) : (
 						<Select onValueChange={field.onChange} value={field.value}>
 							<SelectTrigger>
@@ -132,6 +135,8 @@ function QueryParam({ queryParam }: { queryParam: EndpointQueryParam }) {
 
 					{queryParam.type === 'text' ? (
 						<Input {...field} placeholder={queryParam.placeholder} />
+					) : queryParam.type === 'datetime' ? (
+						<DateTimePicker value={field.value} onChange={field.onChange} />
 					) : (
 						<Select onValueChange={field.onChange} value={field.value}>
 							<SelectTrigger>

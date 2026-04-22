@@ -10,7 +10,7 @@ export type EndpointQueryParam = {
 	description: string;
 	placeholder?: string;
 	defaultValue?: string;
-} & (SelectParam | TextParam);
+} & (SelectParam | TextParam | DateTimeParam);
 
 export type EndpointParam = {
 	id: string;
@@ -19,7 +19,7 @@ export type EndpointParam = {
 	placeholder?: string;
 	required: boolean;
 	defaultValue?: string;
-} & (SelectParam | TextParam);
+} & (SelectParam | TextParam | DateTimeParam);
 
 type SelectParam = {
 	type: 'select';
@@ -30,6 +30,10 @@ type TextParam = {
 	type: 'text';
 	minLength?: number;
 	maxLength?: number;
+};
+
+type DateTimeParam = {
+	type: 'datetime';
 };
 
 export type TextPreset = {
@@ -138,7 +142,8 @@ const steamHoursEndpoint: EndpointConfig = {
 		{
 			id: 'steam_id',
 			label: 'Steam ID',
-			description: 'ID do perfil Steam do jogador. Obtenha em <a href="https://steamid.io" target="_blank">steamid.io</a>',
+			description:
+				'ID do perfil Steam do jogador. Obtenha em <a href="https://steamid.io" target="_blank">steamid.io</a>',
 			type: 'text',
 			placeholder: '76561198209279900',
 			defaultValue: '76561198209279900',
@@ -147,7 +152,8 @@ const steamHoursEndpoint: EndpointConfig = {
 		{
 			id: 'app_id',
 			label: 'App ID do jogo',
-			description: 'ID do jogo na loja da Steam. Encontre em <a href="https://steamdb.info" target="_blank">steamdb.info</a>',
+			description:
+				'ID do jogo na loja da Steam. Encontre em <a href="https://steamdb.info" target="_blank">steamdb.info</a>',
 			type: 'text',
 			placeholder: '381210',
 			defaultValue: '381210',
@@ -194,7 +200,8 @@ const steamNicknameEndpoint: EndpointConfig = {
 		{
 			id: 'steam_id',
 			label: 'Steam ID',
-			description: 'ID do perfil Steam do jogador. Obtenha em <a href="https://steamid.io" target="_blank">steamid.io</a>',
+			description:
+				'ID do perfil Steam do jogador. Obtenha em <a href="https://steamid.io" target="_blank">steamid.io</a>',
 			type: 'text',
 			placeholder: '76561198209279900',
 			defaultValue: '76561198209279900',
@@ -279,7 +286,8 @@ const youtubeLatestVideoEndpoint: EndpointConfig = {
 		{
 			id: 'handle_or_id',
 			label: 'Handle ou ID',
-			description: 'Handle do canal (com @) ou ID. Veja como obter o ID em <a href="https://www.youtube.com/account_advanced" target="_blank">Configurações Avançadas</a>',
+			description:
+				'Handle do canal (com @) ou ID. Veja como obter o ID em <a href="https://www.youtube.com/account_advanced" target="_blank">Configurações Avançadas</a>',
 			type: 'text',
 			placeholder: '@MrBeast',
 			defaultValue: '@MrBeast',
@@ -311,9 +319,8 @@ const datetimeCountdownEndpoint: EndpointConfig = {
 		{
 			id: 'datetime',
 			label: 'Data alvo',
-			description: 'Data e hora (ex: 2026-12-25T00:00:00Z)',
-			type: 'text',
-			placeholder: '2027-01-01T00:00:00Z',
+			description: 'Data e hora para a contagem regressiva',
+			type: 'datetime',
 			defaultValue: '2027-01-01T00:00:00Z',
 		},
 		{
