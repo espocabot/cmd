@@ -247,6 +247,24 @@ const youtubeLatestVideoEndpoint: EndpointConfig = {
 			],
 			defaultValue: 'false',
 		},
+		{
+			id: 'separator',
+			label: 'Separador',
+			description: 'Símbolo para separar o título do link',
+			type: 'select',
+			options: [
+				{ value: ' - ', label: 'Traço (-)' },
+				{ value: ' | ', label: 'Barra (|)' },
+				{ value: ' • ', label: 'Ponto (•)' },
+				{ value: ' ~ ', label: 'Til (~)' },
+				{ value: ' ━ ', label: 'Linha (━)' },
+				{ value: ' ➜ ', label: 'Seta (➜)' },
+				{ value: ' ⋆ ', label: 'Estrela (⋆)' },
+				{ value: ' ♡ ', label: 'Coração (♡)' },
+				{ value: ' ❀ ', label: 'Flor (❀)' },
+			],
+			defaultValue: ' - ',
+		},
 	],
 	params: [
 		{
