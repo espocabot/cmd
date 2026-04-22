@@ -10,7 +10,12 @@ import { getKV, setKV } from '@/lib/kv.ts';
 import { logger } from '@/lib/logger.ts';
 import { err, isErr, ok } from '@/lib/result.ts';
 
-const LATEST_VIDEO_TTL_TIME = 60 * 5; // 5 minutes
+const CACHE_TTL_MAP: Record<YoutubeVideoType, number> = {
+	video: 60 * 60, // 1 hour
+	short: 60 * 15, // 15 minutes
+	live: 60 * 60 * 3, // 3 hours
+	any: 60 * 60, // 1 hour
+};
 
 export class YoutubeProvider {
 	#baseUrl = 'https://www.googleapis.com/youtube/v3';
@@ -121,7 +126,7 @@ export class YoutubeProvider {
 		logger('Fetched latest Short from YouTube API:', JSON.stringify(data));
 
 		await setKV(cacheKey, JSON.stringify(data), {
-			expirationTtl: LATEST_VIDEO_TTL_TIME,
+			expirationTtl: CACHE_TTL_MAP.short,
 		});
 
 		return ok(data);
@@ -181,7 +186,7 @@ export class YoutubeProvider {
 		logger('Fetched latest live from YouTube API:', JSON.stringify(data));
 
 		await setKV(cacheKey, JSON.stringify(data), {
-			expirationTtl: LATEST_VIDEO_TTL_TIME,
+			expirationTtl: CACHE_TTL_MAP.live,
 		});
 
 		return ok(data);
@@ -247,7 +252,7 @@ export class YoutubeProvider {
 		);
 
 		await setKV(cacheKey, JSON.stringify(data), {
-			expirationTtl: LATEST_VIDEO_TTL_TIME,
+			expirationTtl: CACHE_TTL_MAP.video,
 		});
 
 		return ok(data);
@@ -309,7 +314,7 @@ export class YoutubeProvider {
 		logger('Fetched latest upload from YouTube API:', JSON.stringify(data));
 
 		await setKV(cacheKey, JSON.stringify(data), {
-			expirationTtl: LATEST_VIDEO_TTL_TIME,
+			expirationTtl: CACHE_TTL_MAP.any,
 		});
 
 		return ok(data);
