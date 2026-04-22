@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useMemo } from 'react';
+import { Suspense } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -59,11 +59,12 @@ export function CommandGenerator({ endpoint }: CommandGeneratorProps) {
 		},
 	});
 
-	const endpointParams = methods.watch('endpointParams') || {};
-	const endpointQueryParams = methods.watch('endpointQueryParams') || {};
-	const selectedBot = methods.watch('selectedBot');
-	const liveCommand = methods.watch('liveCommand');
-	const chatText = methods.watch('chatText');
+	const formValues = methods.watch();
+	const endpointParams = formValues.endpointParams || {};
+	const endpointQueryParams = formValues.endpointQueryParams || {};
+	const selectedBot = formValues.selectedBot;
+	const liveCommand = formValues.liveCommand;
+	const chatText = formValues.chatText;
 
 	let path = endpoint.pathTemplate;
 	for (const [key, value] of Object.entries(endpointParams)) {
