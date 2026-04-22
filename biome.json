@@ -9,11 +9,13 @@
 		"ignoreUnknown": true,
 		"includes": [
 			"**",
-			"!node_modules",
-			"!.next",
-			"!dist",
-			"!build",
-			"!*.lock"
+			"!**/node_modules",
+			"!**/.next",
+			"!**/dist",
+			"!**/build",
+			"!**/.wrangler",
+			"!**/.turbo",
+			"!**/*.lock"
 		]
 	},
 	"formatter": {
@@ -32,15 +34,8 @@
 				"useSortedClasses": {
 					"level": "error",
 					"options": {
-						"attributes": [
-							"classList"
-						],
-						"functions": [
-							"clsx",
-							"cva",
-							"tw",
-							"cn"
-						]
+						"attributes": ["classList"],
+						"functions": ["clsx", "cva", "tw", "cn"]
 					}
 				}
 			},
@@ -58,6 +53,14 @@
 			"quoteStyle": "single"
 		}
 	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		},
+		"formatter": {
+			"enabled": true
+		}
+	},
 	"assist": {
 		"actions": {
 			"source": {
@@ -66,10 +69,7 @@
 					"options": {
 						"groups": [
 							":URL:",
-							[
-								":NODE:",
-								":BUN:"
-							],
+							[":NODE:", ":BUN:"],
 							":PACKAGE:",
 							"@/**",
 							":PATH:"
