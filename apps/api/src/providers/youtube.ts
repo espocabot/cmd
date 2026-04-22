@@ -1,9 +1,9 @@
 import {
 	type CachedLatestVideoData,
 	type YoutubeVideoType,
+	youtubeChannelResponseSchema,
 	youtubePlaylistItemsResponseSchema,
 	youtubeSearchResponseSchema,
-	youtubeChannelResponseSchema,
 } from '@/definitions/youtube.ts';
 import { getEnvs } from '@/lib/env.ts';
 import { getKV, setKV } from '@/lib/kv.ts';
@@ -23,16 +23,22 @@ export class YoutubeProvider {
 	async getLatestVideo({
 		handleOrId,
 		type,
-	}: { handleOrId: string; type: YoutubeVideoType }) {
+	}: {
+		handleOrId: string;
+		type: YoutubeVideoType;
+	}) {
 		const { YOUTUBE_API_KEY } = getEnvs();
-		
-		const channelIdResult = await this.#resolveChannelId(handleOrId, YOUTUBE_API_KEY);
+
+		const channelIdResult = await this.#resolveChannelId(
+			handleOrId,
+			YOUTUBE_API_KEY,
+		);
 		if (isErr(channelIdResult)) {
 			return err(channelIdResult.error);
 		}
-		
+
 		const channelId = channelIdResult.value;
-		
+
 		const cacheKey = `social:youtube:latest-video:${channelId}:${type}`;
 		const cached = await getKV<CachedLatestVideoData>(cacheKey, 'json');
 
@@ -50,11 +56,7 @@ export class YoutubeProvider {
 		}
 
 		if (type === 'video') {
-			return this.#getLatestLongFormVideo(
-				channelId,
-				YOUTUBE_API_KEY,
-				cacheKey,
-			);
+			return this.#getLatestLongFormVideo(channelId, YOUTUBE_API_KEY, cacheKey);
 		}
 
 		if (type === 'live') {
@@ -105,10 +107,7 @@ export class YoutubeProvider {
 		const parsed = youtubePlaylistItemsResponseSchema.safeParse(json);
 
 		if (!parsed.success) {
-			logger(
-				'Failed to parse Shorts playlist response:',
-				parsed.error.message,
-			);
+			logger('Failed to parse Shorts playlist response:', parsed.error.message);
 			return err(new Error('Failed to parse Shorts playlist response'));
 		}
 
@@ -155,9 +154,7 @@ export class YoutubeProvider {
 		const res = await fetch(url);
 
 		if (!res.ok) {
-			logger(
-				`Failed to fetch live playlist: ${res.status} ${res.statusText}`,
-			);
+			logger(`Failed to fetch live playlist: ${res.status} ${res.statusText}`);
 			return err(new Error('Failed to fetch live playlist'));
 		}
 
@@ -165,10 +162,7 @@ export class YoutubeProvider {
 		const parsed = youtubePlaylistItemsResponseSchema.safeParse(json);
 
 		if (!parsed.success) {
-			logger(
-				'Failed to parse live playlist response:',
-				parsed.error.message,
-			);
+			logger('Failed to parse live playlist response:', parsed.error.message);
 			return err(new Error('Failed to parse live playlist response'));
 		}
 
@@ -228,10 +222,7 @@ export class YoutubeProvider {
 		const parsed = youtubePlaylistItemsResponseSchema.safeParse(json);
 
 		if (!parsed.success) {
-			logger(
-				'Failed to parse videos playlist response:',
-				parsed.error.message,
-			);
+			logger('Failed to parse videos playlist response:', parsed.error.message);
 			return err(new Error('Failed to parse videos playlist response'));
 		}
 
@@ -261,11 +252,7 @@ export class YoutubeProvider {
 	/**
 	 * Gets the most recent upload regardless of type using search.list.
 	 */
-	async #getLatestUpload(
-		channelId: string,
-		apiKey: string,
-		cacheKey: string,
-	) {
+	async #getLatestUpload(channelId: string, apiKey: string, cacheKey: string) {
 		const searchParams = new URLSearchParams({
 			part: 'snippet',
 			channelId,
@@ -295,9 +282,7 @@ export class YoutubeProvider {
 				'Failed to parse YouTube Search API response:',
 				searchParsed.error.message,
 			);
-			return err(
-				new Error('Failed to parse YouTube Search API response'),
-			);
+			return err(new Error('Failed to parse YouTube Search API response'));
 		}
 
 		const firstItem = searchParsed.data.items[0];
@@ -364,7 +349,7 @@ export class YoutubeProvider {
 		}
 
 		const channelId = firstItem.id;
-		
+
 		await setKV(cacheKey, channelId, {
 			expirationTtl: 60 * 60 * 24, // 24 hours
 		});

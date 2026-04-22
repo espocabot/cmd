@@ -1,7 +1,12 @@
 import { z } from 'zod';
 
 export const youtubeVideoTypeSchema = z
-	.union([z.literal('video'), z.literal('short'), z.literal('live'), z.literal('any')])
+	.union([
+		z.literal('video'),
+		z.literal('short'),
+		z.literal('live'),
+		z.literal('any'),
+	])
 	.describe(
 		"Filter by content type: 'video' for regular videos, 'short' for YouTube Shorts, 'live' for live streams, 'any' for all types",
 	);
@@ -9,7 +14,9 @@ export const youtubeVideoTypeSchema = z
 export type YoutubeVideoType = z.infer<typeof youtubeVideoTypeSchema>;
 
 export const getYoutubeLatestVideoParamsSchema = z.object({
-	handle_or_id: z.string().describe('YouTube channel ID or handle (e.g. @MrBeast)'),
+	handle_or_id: z
+		.string()
+		.describe('YouTube channel ID or handle (e.g. @MrBeast)'),
 });
 
 export const getYoutubeLatestVideoQuerySchema = z.object({

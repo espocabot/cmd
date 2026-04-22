@@ -54,7 +54,9 @@ const youtube = createRouter().openapi(
 			return c.json(
 				{
 					success: false as const,
-					error: t('social.youtube.error.latest-video', { channelId: handleOrId }),
+					error: t('social.youtube.error.latest-video', {
+						channelId: handleOrId,
+					}),
 				},
 				NOT_FOUND,
 			);
@@ -62,10 +64,7 @@ const youtube = createRouter().openapi(
 
 		const { title, videoId } = result.value;
 
-		return c.text(
-			provider.formatVideoText(title, videoId, separator),
-			OK,
-		);
+		return c.text(provider.formatVideoText(title, videoId, separator), OK);
 	},
 );
 

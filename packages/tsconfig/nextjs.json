@@ -15,10 +15,6 @@
 		"allowJs": true,
 		"jsx": "react-jsx",
 		"noEmit": true,
-		"lib": [
-			"esnext",
-			"dom",
-			"dom.iterable"
-		]
+		"lib": ["esnext", "dom", "dom.iterable"]
 	}
 }

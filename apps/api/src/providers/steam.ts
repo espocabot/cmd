@@ -1,8 +1,8 @@
 import {
 	type CachedNicknameData,
 	type CachedPlaytimeData,
-	getPlaytimeResponseDataFromSteamSchema,
 	getPlayerSummariesResponseFromSteamSchema,
+	getPlaytimeResponseDataFromSteamSchema,
 	type PlaytimeTextFormat,
 } from '@/definitions/steam.ts';
 import { getTimeInfoFromMinutes } from '@/helpers/timers.ts';
@@ -108,14 +108,10 @@ export class SteamProvider {
 		}
 
 		const json = await res.json();
-		const parsed =
-			getPlayerSummariesResponseFromSteamSchema.safeParse(json);
+		const parsed = getPlayerSummariesResponseFromSteamSchema.safeParse(json);
 
 		if (!parsed.success) {
-			logger(
-				'Failed to parse response from Steam API:',
-				parsed.error.message,
-			);
+			logger('Failed to parse response from Steam API:', parsed.error.message);
 			return err(new Error('Failed to parse response from Steam API'));
 		}
 
