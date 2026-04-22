@@ -188,6 +188,7 @@ const steamNicknameEndpoint: EndpointConfig = {
 			description: 'Idioma da resposta no chat',
 			type: 'select',
 			options: langOptions,
+			defaultValue: 'pt-BR',
 			required: true,
 		},
 		{
@@ -254,6 +255,7 @@ const youtubeLatestVideoEndpoint: EndpointConfig = {
 			description: 'Idioma da resposta no chat',
 			type: 'select',
 			options: langOptions,
+			defaultValue: 'pt-BR',
 			required: true,
 		},
 		{
@@ -262,6 +264,7 @@ const youtubeLatestVideoEndpoint: EndpointConfig = {
 			description: 'Handle do canal (com @) ou ID do canal',
 			type: 'text',
 			placeholder: '@MrBeast',
+			defaultValue: '@MrBeast',
 			required: true,
 		},
 	],
@@ -317,6 +320,7 @@ const datetimeCountdownEndpoint: EndpointConfig = {
 			description: 'Idioma da resposta no chat',
 			type: 'select',
 			options: langOptions,
+			defaultValue: 'pt-BR',
 			required: true,
 		},
 	],
