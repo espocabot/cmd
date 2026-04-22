@@ -115,18 +115,23 @@ const steamHoursEndpoint: EndpointConfig = {
 	pathTemplate: '/api/{lang}/steam/hours/{steam_id}/{app_id}',
 	queryParams: [
 		{
-			id: 'text_format',
+			id: 'text-format',
 			label: 'Formato do texto',
 			description: 'Como a resposta vai aparecer no chat',
 			type: 'select',
 			options: [
+				{ value: 'standard', label: 'Padrão' },
 				{ value: 'casual', label: 'Casual' },
 				{ value: 'compact', label: 'Compacto' },
+				{ value: 'compact-with-seconds', label: 'Compacto com segundos' },
 				{ value: 'detailed', label: 'Detalhado' },
+				{ value: 'extended', label: 'Estendido' },
 				{ value: 'full', label: 'Completo' },
-				{ value: 'minimal', label: 'Minimo' },
+				{ value: 'minimal', label: 'Mínimo' },
+				{ value: 'short-time', label: 'Curto' },
+				{ value: 'precise', label: 'Preciso' },
 			],
-			defaultValue: 'casual',
+			defaultValue: 'standard',
 		},
 	],
 	params: [
@@ -329,13 +334,10 @@ const datetimeCountdownEndpoint: EndpointConfig = {
 			description: 'Formato para exibir no chat',
 			type: 'select',
 			options: [
-				{ value: 'casual', label: 'Casual' },
-				{ value: 'compact', label: 'Compacto' },
-				{ value: 'detailed', label: 'Detalhado' },
-				{ value: 'full', label: 'Completo' },
-				{ value: 'minimal', label: 'Minimo' },
+				{ value: 'full', label: 'Detalhado' },
+				{ value: 'short', label: 'Curto' },
 			],
-			defaultValue: 'casual',
+			defaultValue: 'full',
 		},
 	],
 	params: [
