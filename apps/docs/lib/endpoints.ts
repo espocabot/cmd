@@ -75,19 +75,19 @@ export const bots: BotTemplate[] = [
 		id: 'nightbot',
 		name: 'Nightbot',
 		addCommand: (cmd, msg, url) =>
-			`!addcom ${cmd} ${msg.replace('{result}', `$(urlfetch ${url})`)}`,
+			`!addcom !${cmd} ${msg.replace('{result}', `$(urlfetch ${url})`)}`,
 	},
 	{
 		id: 'streamelements',
 		name: 'StreamElements',
 		addCommand: (cmd, msg, url) =>
-			`!command add ${cmd} ${msg.replace('{result}', `\${urlfetch ${url}}`)}`,
+			`!command add !${cmd} ${msg.replace('{result}', `\${urlfetch ${url}}`)}`,
 	},
 	{
 		id: 'botrix',
 		name: 'Botrix',
 		addCommand: (cmd, msg, url) =>
-			`!addcom ${cmd} ${msg.replace('{result}', `fetch[${url}]`)}`,
+			`!addcom !${cmd} ${msg.replace('{result}', `fetch[${url}]`)}`,
 	},
 ];
 
