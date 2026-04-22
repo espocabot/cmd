@@ -1,4 +1,5 @@
 import { contextStorage } from 'hono/context-storage';
+import { cors } from 'hono/cors';
 import { csrf } from 'hono/csrf';
 import { languageDetector } from 'hono/language';
 import { logger } from 'hono/logger';
@@ -34,6 +35,7 @@ const docConfig = {
 
 const app = createRouter();
 
+app.use('/api/*', cors());
 app.use(contextStorage());
 app.use(csrf());
 app.use(secureHeaders());
@@ -55,7 +57,7 @@ app.getOpenAPI31Document(docConfig);
 // });
 app.use(
 	languageDetector({
-		order: ['path', 'querystring', 'header', 'cookie'],
+		order: ['path'],
 		lookupFromPathIndex: 1,
 		supportedLanguages: ['en-US', 'pt-BR'],
 		fallbackLanguage: 'en-US',
@@ -67,6 +69,6 @@ app.use('*', i18nMiddleware());
 // app.route("/api/:lang/tiktok", tiktok);
 app.route('/api/:lang/steam', steam);
 app.route('/api/:lang/misc', datetime);
-app.route('/health', health);
+app.route('/', health);
 
 export default app;

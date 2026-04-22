@@ -9,7 +9,7 @@ import { createRouter } from '@/lib/create-router.ts';
 import { isErr } from '@/lib/result.ts';
 import { SteamProvider } from '@/providers/steam.ts';
 
-const steam = createRouter().openapi(
+export const steam = createRouter().openapi(
 	{
 		method: 'get',
 		path: '/hours/{steam_id}/{app_id}',
@@ -43,7 +43,7 @@ const steam = createRouter().openapi(
 		const { 'text-format': textFormat } = c.req.valid('query');
 		const { steam_id: steamId, app_id: appId } = c.req.valid('param');
 
-		const provider = new SteamProvider();
+		const provider = new SteamProvider(c);
 
 		const playtimeResult = await provider.getPlaytime({
 			appId,
@@ -68,5 +68,3 @@ const steam = createRouter().openapi(
 		);
 	},
 );
-
-export { steam };

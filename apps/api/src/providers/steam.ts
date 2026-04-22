@@ -1,10 +1,12 @@
+import type { Context } from 'hono';
+import { env } from 'hono/adapter';
+import type { HonoEnv } from '@/definitions/config.ts';
 import {
 	type CachedPlaytimeData,
 	getPlaytimeResponseDataFromSteamSchema,
 	type PlaytimeTextFormat,
 } from '@/definitions/steam.ts';
 import { getTimeInfoFromMinutes } from '@/helpers/timers.ts';
-import { getEnvs } from '@/lib/env.ts';
 import { getKV, setKV } from '@/lib/kv.ts';
 import { logger } from '@/lib/logger.ts';
 import { err, ok } from '@/lib/result.ts';
@@ -14,16 +16,27 @@ const DEFAULT_TTL_TIME = 60 * 15; // 15 minutes
 
 export class SteamProvider {
 	#baseUrl = 'https://api.steampowered.com';
+	// biome-ignore lint/correctness/noUnusedPrivateClassMembers: <explanation>
+	#env: HonoEnv['Bindings'];
+
+	constructor(c: Context<HonoEnv>) {
+		this.#env = env(c);
+	}
 
 	async getPlaytime({ steamId, appId }: { steamId: string; appId: string }) {
 		const cacheKey = `social:steam:playtime:${steamId}:${appId}`;
 		const cached = await getKV<CachedPlaytimeData>(cacheKey, 'json');
-		const { STEAM_WEB_API_KEY } = getEnvs();
+
+		const { STEAM_WEB_API_KEY } = this.#env;
 
 		if (cached) {
 			logger('Cache hit for:', cacheKey);
 			return ok(cached);
 		}
+
+		logger(
+			`${this.#baseUrl}/IPlayerService/GetOwnedGames/v1/?key=${STEAM_WEB_API_KEY}&steamid=${steamId}&include_appinfo=true&appids_filter[0]=${appId}&format=json`,
+		);
 
 		const res = await fetch(
 			`${this.#baseUrl}/IPlayerService/GetOwnedGames/v1/?key=${STEAM_WEB_API_KEY}&steamid=${steamId}&include_appinfo=true&appids_filter[0]=${appId}&format=json`,
