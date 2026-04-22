@@ -65,7 +65,9 @@ function RouteParam({ param }: { param: EndpointParam }) {
 						</FieldLabel>
 
 						{param.description ? (
-							<FieldDescription>{param.description}</FieldDescription>
+							<FieldDescription
+								dangerouslySetInnerHTML={{ __html: param.description }}
+							/>
 						) : null}
 					</FieldContent>
 
@@ -122,7 +124,9 @@ function QueryParam({ queryParam }: { queryParam: EndpointQueryParam }) {
 						</div>
 
 						{queryParam.description ? (
-							<FieldDescription>{queryParam.description}</FieldDescription>
+							<FieldDescription
+								dangerouslySetInnerHTML={{ __html: queryParam.description }}
+							/>
 						) : null}
 					</FieldContent>
 
