@@ -31,6 +31,11 @@ export const getYoutubeLatestVideoQuerySchema = z.object({
 		.optional()
 		.default(' - ')
 		.describe('Separator between the title and the URL in the response'),
+	omit_hashtags: z
+		.enum(['true', 'false'])
+		.default('false')
+		.transform((val) => val === 'true')
+		.describe('If true, removes any hashtags from the video title'),
 });
 
 export const getYoutubeLatestVideoResponseSchema = z

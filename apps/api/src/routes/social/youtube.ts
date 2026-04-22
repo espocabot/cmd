@@ -41,7 +41,7 @@ const youtube = createRouter().openapi(
 	async (c) => {
 		const t = c.get('t');
 		const { handle_or_id: handleOrId } = c.req.valid('param');
-		const { type, separator } = c.req.valid('query');
+		const { type, separator, omit_hashtags } = c.req.valid('query');
 
 		const provider = new YoutubeProvider();
 
@@ -64,7 +64,10 @@ const youtube = createRouter().openapi(
 
 		const { title, videoId } = result.value;
 
-		return c.text(provider.formatVideoText(title, videoId, separator), OK);
+		return c.text(
+			provider.formatVideoText(title, videoId, separator, omit_hashtags),
+			OK,
+		);
 	},
 );
 
