@@ -80,7 +80,7 @@ export function CommandGenerator({ endpoint }: CommandGeneratorProps) {
 			searchParams.append(key, value);
 		}
 
-		const url = new URL(path, 'http://localhost:8787');
+		const url = new URL(path, process.env.NEXT_PUBLIC_API_BASE_URL);
 		url.search = searchParams.toString();
 		return url.toString();
 	}, [endpoint.pathTemplate, endpointParams, endpointQueryParams]);
